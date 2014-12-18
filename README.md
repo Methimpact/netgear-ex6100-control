@@ -6,13 +6,13 @@ Bash Script to control certain features of a Netgear EX6100
 #####Setup
 Grant Executable rights:
 ```bash
-chmod +x netagearWifiControl
+chmod +x netgearWifiControl
 ```
 
 #####Usage
 Run:
 ```bash
-./netagearWifiControl <options>
+./netgearWifiControl <options>
 ```
 ######Options
 | Option        | Function                                               |
