@@ -1,0 +1,83 @@
+#!/bin/bash
+username="x"
+password="x"
+host="x"
+
+function netgearEnableWifi() {
+    curl -s -u $username:$password \
+    -d "Apply=Apply" \
+    -d "Apply=Apply" \
+    -d "enable_ap_24g=enable_ap_24g" \
+    -d "ssid_bc_24g=ssid_bc_24g" \
+    -d "enable_coexistence=enable_coexistence" \
+    -d "enable_ap_5g=enable_ap_5g" \
+    -d "ssid_bc_5g=ssid_bc_5g" \
+    -d "pin_disable=1" \
+    -d "prevent_pin_compromise=1" \
+    -d "pin_attack_count=3" \
+    -d "wsc_config_24g=wsc_config_24g" \
+    -d "wsc_config_5g=wsc_config_5g" \
+    -d "wps_enable=enabled" \
+    -d "show_wps_alert=0" \
+    -d "ap_mode=2" \
+    -d "ap_band=2.4G" \
+    -d "sta_band=both" \
+    -d "setRegion=5" \
+    http://$host/wlg_adv.cgi?id=$sessionId > /dev/null
+}
+
+function netgearDisableWifi() {
+    curl -s -u $username:$password \
+    -d "Apply=Apply" \
+    -d "Apply=Apply" \
+    -d "ssid_bc_24g=ssid_bc_24g" \
+    -d "enable_coexistence=enable_coexistence" \
+    -d "ssid_bc_5g=ssid_bc_5g" \
+    -d "pin_disable=1" \
+    -d "prevent_pin_compromise=1" \
+    -d "pin_attack_count=3" \
+    -d "wsc_config_24g=wsc_config_24g" \
+    -d "wsc_config_5g=wsc_config_5g" \
+    -d "wps_enable=enabled" \
+    -d "show_wps_alert=0" \
+    -d "ap_mode=2" \
+    -d "ap_band=2.4G" \
+    -d "sta_band=both" \
+    -d "setRegion=5" \
+    http://$host/wlg_adv.cgi?id=$sessionId > /dev/null
+}
+
+function netgearLogout() {
+    curl -s -u $username:$password http://$host/LGO_logout.htm > /dev/null
+}
+
+#
+# Get Timestamp
+sessionId=$(curl -s -u $username:$password http://$host/wladv.htm | grep -oP '(?!wlg_adv\.cgi\?id=)[0-9]{10}')
+if [ -z "$sessionId" ]; then
+    sessionId=$(curl -s -u $username:$password http://$host/MNU_access_multiLogin2.htm | grep -oP '(?!wlg_adv\.cgi\?id=)[0-9]{10}')
+    curl -s -u $username:$password \
+    -d "yes=Yes" \
+    -d "no=No" \
+    -d "act=yes" \
+    http://$host/multi_login.cgi?id=$sessionId > /dev/null
+    sessionId=$(curl -s -u $username:$password http://$host/wladv.htm | grep -oP '(?!wlg_adv\.cgi\?id=)[0-9]{10}')
+fi
+
+if [ -z $1 ]; then
+    echo "No options give"
+    echo "Please use netagearWifiControl enable | disable!"
+    exit
+fi
+
+if [ "$1" = "enable" ]; then
+    netgearEnableWifi
+elif [ "$1" = "disable" ]; then
+    netgearDisableWifi
+else
+    echo "Option not recognized."
+    echo "Please use netagearWifiControl enable | disable!"
+    exit
+fi
+netgearLogout
+exit
