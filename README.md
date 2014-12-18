@@ -1,4 +1,4 @@
-netgear-ex6100-control
+Netgear EX6100 Control Script
 ======================
 
 Bash Script to control certain features of a Netgear EX6100
