@@ -64,15 +64,16 @@ if [ -z "$sessionId" ]; then
     sessionId=$(curl -s -u $username:$password http://$host/wladv.htm | grep -oP '(?!wlg_adv\.cgi\?id=)[0-9]{10}')
 fi
 
-if [ -z $1 ]; then
+action=$1
+if [ -z $action ]; then
     echo "No options give"
     echo "Please use netgearWifiControl enable | disable!"
     exit
 fi
 
-if [ "$1" = "enable" ]; then
+if [ "$action" = "enable" ]; then
     netgearEnableWifi
-elif [ "$1" = "disable" ]; then
+elif [ "$action" = "disable" ]; then
     netgearDisableWifi
 else
     echo "Option not recognized."
