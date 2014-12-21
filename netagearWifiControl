@@ -51,8 +51,18 @@ function netgearLogout() {
     curl -s -u $username:$password http://$host/LGO_logout.htm > /dev/null
 }
 
+function getWifiStatus() {
+    # This effectively only checks the 2.4Ghz Adapter
+    gp=$(curl -s -u $username:$password http://$host/wladv.htm | grep "enable_ap_24g" | grep checked)
+    if [ "x$gp" = "x" ]; then
+        echo "disabled"
+    else
+        echo "enabled"
+    fi
+}
+
 #
-# Get Timestamp
+# Main
 sessionId=$(curl -s -u $username:$password http://$host/wladv.htm | grep -oP '(?!wlg_adv\.cgi\?id=)[0-9]{10}')
 if [ -z "$sessionId" ]; then
     sessionId=$(curl -s -u $username:$password http://$host/MNU_access_multiLogin2.htm | grep -oP '(?!wlg_adv\.cgi\?id=)[0-9]{10}')
@@ -75,6 +85,8 @@ if [ "$action" = "enable" ]; then
     netgearEnableWifi
 elif [ "$action" = "disable" ]; then
     netgearDisableWifi
+elif [ "$action" = "status" ]; then
+    getWifiStatus
 else
     echo "Option not recognized."
     echo "Please use netgearWifiControl enable | disable!"
